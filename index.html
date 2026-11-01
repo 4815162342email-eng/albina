@@ -63,10 +63,10 @@ button:focus-visible, [role=button]:focus-visible { outline: 4px solid var(--mag
 .toast { position: absolute; left: 50%; top: 86px; transform: translateX(-50%) rotate(-1deg); padding: 12px 22px; font-size: 25px; z-index: 40; max-width: 760px; text-align: center; animation: pop .25s ease-out; }
 .toast.err { background: var(--err); }
 .toast.ok { background: var(--ok); }
-.note { position: absolute; z-index: 15; padding: 14px 20px; font-size: 22px; line-height: 1.35; }
+.note { box-sizing: border-box; position: absolute; z-index: 15; padding: 14px 20px; font-size: 22px; line-height: 1.35; }
 .note h2 { font-size: 34px; margin-bottom: 6px; color: var(--magic); }
 .note.goal { left: 50%; top: 100px; transform: translateX(-50%) rotate(-.6deg); max-width: 640px; text-align: center; }
-.recipe-card { left: 28px; top: 80px; width: 400px; transform: rotate(-1.2deg); background: #FFF6DA; }
+.recipe-card { left: 24px; top: 80px; width: 420px; transform: rotate(-1.2deg); background: #FFF6DA; }
 .recipe { margin: 0; padding-left: 28px; display: grid; gap: 6px; }
 .rnote { margin: 8px 0 0; font-weight: 700; color: var(--rasp); }
 .swamp-note { left: 50%; top: 84px; transform: translateX(-50%); width: 780px; text-align: center; }
@@ -97,9 +97,9 @@ button:focus-visible, [role=button]:focus-visible { outline: 4px solid var(--mag
 .ing-in { transition: transform .15s; }
 .ing.hop .ing-in { animation: hop .35s ease-out; }
 .ing.glow .ing-in, .pad-in.glow, .mir.glow circle { filter: drop-shadow(0 0 10px #FFE45C) drop-shadow(0 0 4px #FFE45C); }
-.pot { position: absolute; left: 446px; top: 318px; width: 300px; min-height: 64px; padding: 6px 12px; display: flex; gap: 8px; align-items: center; font-size: 18px; z-index: 6; }
+.pot { position: absolute; left: 466px; top: 300px; width: 292px; min-height: 70px; padding: 6px 12px 8px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; font-size: 18px; z-index: 6; box-sizing: border-box; }
 .pot-items { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; }
-.pot-items svg { width: 36px; height: 36px; }
+.pot-items svg { width: 30px; height: 30px; }
 .pot-items em { color: #7A6E92; }
 .lab-btns { position: absolute; right: 36px; bottom: 34px; display: flex; gap: 14px; z-index: 6; }
 #bubbles .bub { animation: bub 1.8s ease-in infinite; }
@@ -230,6 +230,22 @@ button:focus-visible, [role=button]:focus-visible { outline: 4px solid var(--mag
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .rain, .confetti { display: none; }
 }
+
+.clap.used { opacity: .5; }
+.sym-count { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--magic); }
+.found { width: 560px; padding: 24px 30px; display: grid; justify-items: center; text-align: center; gap: 8px; background: #FFF6DA; animation: pop2 .35s ease-out; }
+.found svg { width: 130px; height: 130px; filter: drop-shadow(0 0 16px #FFE45C); }
+.found h2 { font-size: 56px; color: var(--magic); }
+.found-k { margin: 0; font-family: var(--f-display); font-size: 32px; color: var(--rasp); }
+.found p { margin: 0 0 6px; font-size: 22px; line-height: 1.35; }
+.glare, .beam { cursor: pointer; }
+.p-tools { position: absolute; right: 40px; bottom: 34px; display: flex; gap: 18px; align-items: center; z-index: 6; }
+.p-moves { font-family: var(--f-display); font-size: 28px; color: var(--paper); background: rgba(43,33,64,.85); padding: 6px 16px; border-radius: 999px; }
+.t8 { transition: transform .18s ease-out; cursor: pointer; }
+.t8n { display: none; }
+.shownums .t8n { display: inline; }
+.flame { animation: flick .4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center bottom; }
+@keyframes pop2 { from { transform: scale(.7); opacity: 0; } }
 
 </style>
 <div id="viewport"><div id="stage" aria-live="polite"></div></div>
@@ -432,7 +448,7 @@ const ING_ICON = {
   apple: `<circle cx="0" cy="6" r="22" fill="#D7263D" stroke="#7E1020" stroke-width="2.5"/><path d="M0 -14 V-24" stroke="#6B3A12" stroke-width="3.5" stroke-linecap="round"/><path d="M2 -20 C10 -30 22 -24 20 -18 C12 -14 6 -16 2 -20 Z" fill="#4CAF50"/><circle cx="-8" cy="-2" r="4" fill="#fff" opacity=".6"/>`,
   leaf: `<path d="M-22 22 C-26 -10 4 -30 26 -26 C28 4 6 26 -22 22 Z" fill="#4CAF50" stroke="#1F6E3A" stroke-width="2.5"/><path d="M-22 22 L18 -18" stroke="#1F6E3A" stroke-width="2"/>`,
   drop: `<path d="M0 -30 C16 -6 18 12 0 26 C-18 12 -16 -6 0 -30 Z" fill="#2F5BD3" stroke="#1A3590" stroke-width="2.5"/><ellipse cx="-6" cy="4" rx="4" ry="7" fill="#fff" opacity=".6"/>`,
-  lily: `<path d="M0 8 L28 2 A30 18 0 1 1 28 14 Z" fill="#2E9E4F" stroke="#1F6E3A" stroke-width="2.5"/><g fill="#fff" stroke="#E58AB8" stroke-width="2"><path d="M0 0 C-6 -14 -2 -24 0 -26 C2 -24 6 -14 0 0 Z"/><path d="M0 0 C-14 -10 -18 -20 -16 -22 C-12 -22 -4 -14 0 0 Z"/><path d="M0 0 C14 -10 18 -20 16 -22 C12 -22 4 -14 0 0 Z"/></g>`,
+  lily: `<path d="M0 8 L28 2 A30 18 0 1 0 28 14 Z" fill="#2E9E4F" stroke="#1F6E3A" stroke-width="2.5"/><g fill="#fff" stroke="#E58AB8" stroke-width="2"><path d="M0 0 C-6 -14 -2 -24 0 -26 C2 -24 6 -14 0 0 Z"/><path d="M0 0 C-14 -10 -18 -20 -16 -22 C-12 -22 -4 -14 0 0 Z"/><path d="M0 0 C14 -10 18 -20 16 -22 C12 -22 4 -14 0 0 Z"/></g>`,
   sun: `<g stroke="#F2A51A" stroke-width="4" stroke-linecap="round"><path d="M0 -30 V-20 M0 20 V30 M-30 0 H-20 M20 0 H30 M-21 -21 L-14 -14 M14 14 L21 21 M21 -21 L14 -14 M-14 14 L-21 21"/></g><circle r="15" fill="#FFD23F" stroke="#F2A51A" stroke-width="2.5"/>`,
   trace: bottle('#F2C230'),
   kind: bottle('#3BB273')
@@ -550,17 +566,27 @@ BG.ward = () => `<rect width="1280" height="720" fill="#EFE4FB"/>
 'use strict';
 /* ===== Движок ===== */
 const W = 1280, H = 720;
-const STEP = { intro: 0, lab1: 1, bridge: 2, swamp: 3, door: 4, wolfMeet: 5, lab2: 6, wolf: 7, mirrors: 8, duel: 9, end: 10 };
+const STEP = { intro: 0, lab1: 1, bridge: 2, swamp: 3, door: 4, wolfMeet: 5, lab2: 6, wolf: 7, portrait: 8, mirrors: 9, duel: 10, end: 11 };
 const DEF_S = { step: 0, outfit: { dress: 'gown', top: null, bottom: null, hat: null }, inv: {}, symbols: [], voice: false, sound: true, bookOrder: null, back: 'title' };
 const clone = o => JSON.parse(JSON.stringify(o));
 let S = clone(DEF_S);
-const SAVE_KEY = 'albina-game-v1';
+const SAVE_KEY = 'albina-game-v2';
 function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { } }
-function loadSave() { try { const t = localStorage.getItem(SAVE_KEY); if (t) S = Object.assign(clone(DEF_S), JSON.parse(t)); } catch (e) { } }
+function loadSave() {
+  try {
+    const t = localStorage.getItem(SAVE_KEY);
+    if (t) { S = Object.assign(clone(DEF_S), JSON.parse(t)); return; }
+    const old = localStorage.getItem('albina-game-v1');
+    if (old) { const d = JSON.parse(old); if (d.step >= 8) d.step++; S = Object.assign(clone(DEF_S), d); save(); }
+  } catch (e) { }
+}
 
 const stage = document.getElementById('stage'), vp = document.getElementById('viewport');
 function fit() { const r = vp.getBoundingClientRect(); const s = Math.min(r.width / W, r.height / H); stage.style.transform = `translate(${(r.width - W * s) / 2}px, ${(r.height - H * s) / 2}px) scale(${s})`; }
 addEventListener('resize', fit);
+let MX = 640;
+stage.addEventListener('pointermove', e => { const r = stage.getBoundingClientRect(); MX = (e.clientX - r.left) * W / r.width; });
+addEventListener('keydown', e => { if (e.key === 'ArrowLeft') MX = Math.max(0, MX - 70); if (e.key === 'ArrowRight') MX = Math.min(W, MX + 70); });
 
 let TIMERS = [], RAF = 0, SEL = null;
 const later = (fn, ms) => { const id = setTimeout(fn, ms); TIMERS.push(id); return id; };
@@ -668,16 +694,20 @@ function say(msg, kind = '') {
 }
 function note(html, cls = '') { return add(`<div class="note sheet ${cls}">${html}</div>`); }
 
-let claps = 3;
+let claps = 1, clapB = null;
 function clapButton(hintFn) {
-  claps = 3;
-  const b = add(`<button class="clap" id="clapBtn" aria-label="Хлопнуть в ладоши, чтобы позвать Эрена">${ICON.clap}<span>Хлопнуть<br>в ладоши</span><b class="clap-n" aria-label="Осталось хлопков">${claps}</b></button>`);
+  claps = 1;
+  const b = add(`<button class="clap" id="clapBtn" aria-label="Хлопнуть в ладоши, чтобы позвать Эрена. Одна подсказка на раунд">${ICON.clap}<span>Хлопнуть<br>в ладоши</span><b class="clap-n">1</b></button>`);
+  clapB = b;
   b.onclick = () => {
-    if (claps <= 0) { sfx.err(); say('Эрен уже помог три раза. Дальше ты справишься сама!', 'err'); return; }
-    sfx.clap(); claps--; $('.clap-n', b).textContent = claps;
-    later(() => erenPop(hintFn()), 300);
+    if (claps <= 0) { sfx.err(); say('В этом раунде Эрен уже помог. В следующем раунде позови снова!', 'err'); return; }
+    const r = hintFn(); sfx.clap();
+    if (r && r.keep) { later(() => erenPop(r.t), 300); return; }
+    claps--; updClap(); later(() => erenPop(r), 300);
   };
 }
+function updClap() { if (clapB && clapB.isConnected) { clapB.querySelector('.clap-n').textContent = claps; clapB.classList.toggle('used', claps <= 0); } }
+function newRoundClap() { claps = 1; updClap(); }
 function erenPop(text) {
   $$('.eren-pop').forEach(e => e.remove());
   const p = add(`<div class="eren-pop"><svg class="eren-fig" viewBox="-60 -80 120 430" aria-hidden="true">${ART.eren()}</svg><div class="bubble sheet"><b>Эрен:</b> ${text}</div></div>`);
@@ -712,7 +742,7 @@ function goStep() {
   const st = S.step;
   if (st === STEP.intro) go('intro'); else if (st === STEP.lab1) go('lab', 1); else if (st === STEP.bridge) go('bridge');
   else if (st === STEP.swamp) go('swamp'); else if (st === STEP.door) go('door'); else if (st === STEP.wolfMeet || st === STEP.wolf) go('wolf');
-  else if (st === STEP.lab2) go('lab', 2); else if (st === STEP.mirrors) go('mirrors'); else if (st === STEP.duel) go('duel'); else go('end');
+  else if (st === STEP.lab2) go('lab', 2); else if (st === STEP.portrait) go('portrait'); else if (st === STEP.mirrors) go('mirrors'); else if (st === STEP.duel) go('duel'); else go('end');
 }
 function setStep(n) { S.step = n; save(); }
 
@@ -743,6 +773,7 @@ SC.intro = () => {
       sfx.magic(); $('#bro').classList.add('hidden'); $('#wiz').classList.add('hidden');
       later(() => talk([
         { who: 'Альбина', text: 'Мирин! Не бойся, я тебя спасу!' },
+        { who: 'Альбина', text: 'Говорят, дверь в пещеру Рарина открывается только волшебными знаками. Их три, и они спрятаны в разных местах. Буду искать их по дороге!' },
         { who: 'Альбина', text: 'Сначала сварю зелье следа. Оно покажет дорогу к пещере волшебника.', end: 'В путь!' }
       ], () => { setStep(STEP.lab1); go('lab', 1); }), 900);
     }), 700);
@@ -754,9 +785,9 @@ const NODES = [
   { id: 'castle', name: 'Замок', x: 160, y: 360, steps: [0, 1, 6] },
   { id: 'bridge', name: 'Мост', x: 430, y: 600, steps: [2] },
   { id: 'swamp', name: 'Болото', x: 790, y: 380, steps: [3] },
-  { id: 'cave', name: 'Пещера', x: 1060, y: 630, steps: [4, 5, 7, 8, 9] }
+  { id: 'cave', name: 'Пещера', x: 1060, y: 630, steps: [4, 5, 7, 8, 9, 10] }
 ];
-const GOALS = ['Начни историю в замке.', 'Свари зелье следа в замке.', 'Почини мост под дождём.', 'Перейди болото по кувшинкам.', 'Открой волшебную дверь пещеры.', 'Войди в пещеру.', 'Вернись в замок и свари зелье добра для волка.', 'Расколдуй волка зельем добра.', 'Направь солнечный свет в тёмную пещеру.', 'Победи злого волшебника Рарина.', 'Мирин спасён!'];
+const GOALS = ['Начни историю в замке.', 'Свари зелье следа в замке.', 'Почини мост под дождём.', 'Перейди болото по кувшинкам.', 'Открой волшебную дверь пещеры.', 'Войди в пещеру.', 'Вернись в замок и свари зелье добра для волка.', 'Расколдуй волка зельем добра.', 'Загляни в тайную комнату Рарина.', 'Направь солнечный свет в тёмную пещеру.', 'Победи злого волшебника Рарина.', 'Мирин спасён!'];
 SC.map = () => {
   add(svg(BG.map()));
   topbar({ home: true });
@@ -766,7 +797,7 @@ SC.map = () => {
     $('#steps').innerHTML = h;
   }
   if (S.step >= STEP.end) { note('Мирин спасён! Можно играть снова с заставки.', 'goal'); }
-  else note(`<b>Куда идти:</b> ${GOALS[S.step]}`, 'goal');
+  else note(`<b>Куда идти:</b> ${GOALS[S.step]}${S.step <= STEP.door ? `<br><span class="sym-count">Волшебные знаки: ${S.symbols.length} из 3</span>` : ''}`, 'goal');
   NODES.forEach(n => {
     const cur = n.steps.includes(S.step), done = !cur && n.steps.some(s => s < S.step);
     const b = add(`<button class="node ${cur ? 'cur' : ''} ${done ? 'done' : ''}" style="left:${n.x}px;top:${n.y}px">${n.name}${done ? ' ✓' : ''}</button>`);
@@ -780,13 +811,24 @@ SC.map = () => {
   const w = add(`<button class="btn alt map-ward">Гардероб</button>`); w.onclick = () => { sfx.click(); go('wardrobe', 'map'); };
 };
 
+/* ----- Найденный волшебный знак ----- */
+function foundSymbol(k, where, done) {
+  if (!S.symbols.includes(k)) S.symbols.push(k); save();
+  sfx.magic();
+  const n = S.symbols.length;
+  const ov = add(`<div class="overlay"><div class="found sheet" role="dialog" aria-label="Найден волшебный знак"><p class="found-k">Найден волшебный знак!</p><svg viewBox="-32 -32 64 64" aria-hidden="true">${SYM[k]}</svg><h2>${SYM_NAME[k]}</h2><p>Знак ${n} из 3. Запомни: ты нашла его <b>${where}</b>.<br>Такие знаки откроют дверь в пещеру Рарина!</p><button class="btn" id="fOk">Записать в книгу</button></div></div>`);
+  speak(`Найден волшебный знак ${SYM_NAME[k]}. Запомни, ты нашла его ${where}. Такие знаки откроют дверь в пещеру Рарина!`);
+  $('#fOk', ov).onclick = () => { sfx.click(); ov.remove(); done && done(); }; $('#fOk', ov).focus();
+}
+
 /* ----- Лаборатория зелий ----- */
 const ING = { feather: 'Перо', honey: 'Мёд', stardust: 'Звёздная пыль', flower: 'Цветок', mushroom: 'Гриб', crystal: 'Кристалл', apple: 'Яблоко', leaf: 'Листик', drop: 'Капля дождя', lily: 'Кувшинка', sun: 'Солнечный лучик' };
 const ING_COLOR = { feather: '#EDE8FF', honey: '#F2A51A', stardust: '#FFE066', flower: '#FF7EB6', mushroom: '#E0402F', crystal: '#5AB0FF', apple: '#D7263D', leaf: '#4CAF50', drop: '#2F5BD3', lily: '#2E9E4F', sun: '#FFD23F' };
 const RECIPES = {
   1: { name: 'Зелье следа', lines: ['То, что потеряла птичка, когда летела.', 'Две ложки того, что пчёлы делают из цветов.', 'Щепотку того, что сверкает на небе ночью.'], note: 'Клади всё по порядку. Зелье должно стать золотым.', ans: ['feather', 'honey', 'honey', 'stardust'], shelf: ['flower', 'feather', 'mushroom', 'honey', 'crystal', 'stardust', 'apple', 'leaf'] },
-  2: { name: 'Зелье добра', lines: ['Столько капель дождя, сколько ушей у волка.', 'Одну кувшинку с болота.', 'Столько солнечных лучиков, сколько у тебя рук.'], note: 'Клади всё по порядку. Зелье должно стать зелёным.', ans: ['drop', 'drop', 'lily', 'sun', 'sun'], shelf: ['flower', 'feather', 'mushroom', 'honey', 'crystal', 'stardust', 'apple', 'leaf', 'drop', 'lily', 'sun'] }
+  2: { name: 'Зелье добра', lines: ['Капель дождя — столько, сколько лап у волка.', 'Кувшинок — на одну меньше, чем капель.', 'Солнечных лучиков — столько, сколько волшебных знаков ты нашла.'], note: 'Клади по порядку: капли, кувшинки, лучики. Зелье должно стать зелёным.', ans: ['drop', 'drop', 'drop', 'drop', 'lily', 'lily', 'lily', 'sun', 'sun', 'sun'], shelf: ['flower', 'feather', 'mushroom', 'honey', 'crystal', 'stardust', 'apple', 'leaf', 'drop', 'lily', 'sun'] }
 };
+const MAX_POT = 12;
 function hex(c) { const n = parseInt(c.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
 function mix(ids) {
   if (!ids.length) return '#6B6B7A';
@@ -804,15 +846,16 @@ SC.lab = (n) => {
   add(svg(BG.lab() + shelf + hero(300, 704, .78) + `<g id="puff"></g>`));
   topbar({ map: true });
   note(`<h2>${R.name}</h2><ol class="recipe">${R.lines.map(l => `<li>${l}</li>`).join('')}</ol><p class="rnote">${R.note}</p>`, 'recipe-card');
-  const pot = add(`<div class="pot sheet"><span>В котле:</span><div class="pot-items"></div></div>`);
+  const pot = add(`<div class="pot sheet"><span>В котле <b class="pot-n">0</b>:</span><div class="pot-items"></div></div>`);
   const btns = add(`<div class="lab-btns"><button class="btn magic" id="brew">Сварить зелье</button><button class="btn alt" id="pour">Вылить</button></div>`);
   const upd = () => {
-    $('.pot-items', pot).innerHTML = added.length ? added.map(id => `<svg viewBox="-34 -34 68 68" aria-label="${ING[id]}">${ING_ICON[id]}</svg>`).join('') : '<em>пусто</em>';
+    $('.pot-n', pot).textContent = added.length;
+    $('.pot-items', pot).innerHTML = added.length ? added.map(id => `<svg viewBox="-34 -34 68 68" aria-label="${ING[id]}">${ING_ICON[id]}</svg>`).join('') : '<em>пока пусто</em>';
     $('#liquid').setAttribute('fill', mix(added));
   };
   upd();
   $$('.ing').forEach(g => onAct(g, () => {
-    if (added.length >= 7) { sfx.err(); say('Котёл полон! Вылей зелье и начни заново.', 'err'); return; }
+    if (added.length >= MAX_POT) { sfx.err(); say('Котёл полон! Вылей зелье и начни заново.', 'err'); return; }
     added.push(g.dataset.id); sfx.bubble(); g.classList.remove('hop'); void g.getBoundingClientRect(); g.classList.add('hop'); upd();
   }, ING[g.dataset.id]));
   $('#pour', btns).onclick = () => { sfx.click(); added = []; upd(); };
@@ -822,10 +865,10 @@ SC.lab = (n) => {
       sfx.win(); sparkle(640, 450, 18); $('#brew', btns).disabled = true;
       later(() => {
         if (n === 1) {
-          S.inv.trace = true; if (!S.symbols.includes('star')) S.symbols.push('star'); setStep(STEP.bridge);
-          talk([{ who: 'Альбина', text: 'Получилось! Золотое зелье следа готово. Теперь на карте видно следы волшебника.' },
-          { who: 'Альбина', text: 'Ой, на дне котла что-то блестит. Это волшебный знак Звезда! Запишу его в свою книгу.' },
-          { who: 'Альбина', text: 'Следы ведут к мосту. Говорят, там сейчас сильный ливень.', end: 'На карту' }], () => go('map'));
+          S.inv.trace = true; setStep(STEP.bridge);
+          talk([{ who: 'Альбина', text: 'Получилось! Золотое зелье следа готово. Теперь на карте видно следы Рарина.' },
+          { who: 'Альбина', text: 'Ой, на дне котла что-то блестит!', end: 'Посмотреть' }], () => foundSymbol('star', 'в замке', () =>
+            talk([{ who: 'Альбина', text: 'Следы ведут к мосту. Говорят, там сейчас сильный ливень.', end: 'На карту' }], () => go('map'))));
         } else {
           S.inv.kind = true; setStep(STEP.wolf);
           talk([{ who: 'Альбина', text: 'Зелёное зелье добра готово! Скорее обратно в пещеру, к волку.', end: 'На карту' }], () => go('map'));
@@ -833,17 +876,18 @@ SC.lab = (n) => {
       }, 900);
     } else {
       sfx.err(); $('#puff').innerHTML = `<g class="puff"><circle cx="600" cy="420" r="40" fill="#8E8E99"/><circle cx="660" cy="400" r="50" fill="#9E9EA8"/><circle cx="700" cy="430" r="36" fill="#8E8E99"/></g>`;
-      say('Пф-ф! Зелье не получилось. Перечитай рецепт и попробуй снова.', 'err'); added = []; upd();
+      say('Пф-ф! Зелье не получилось. Перечитай рецепт и посчитай ещё раз.', 'err'); added = []; upd();
     }
   };
   clapButton(() => {
     let k = 0; while (k < added.length && added[k] === R.ans[k]) k++;
-    if (k < added.length) return 'В котле уже есть что-то лишнее. Вылей зелье и начни сначала!';
-    if (k >= R.ans.length) return 'Всё уже в котле! Нажимай «Сварить зелье».';
-    const g = $(`.ing[data-id="${R.ans[k]}"]`); if (g) { g.classList.add('glow'); later(() => g.classList.remove('glow'), 3500); }
-    return `Следующим нужно положить: ${ING[R.ans[k]].toLowerCase()}. Я подсветил!`;
+    if (k < added.length) return 'В котле уже есть что-то не то. Вылей зелье и начни сначала!';
+    if (k >= R.ans.length) return { t: 'Всё уже в котле! Нажимай «Сварить зелье».', keep: true };
+    const id = R.ans[k]; let cnt = 0; for (let i = k; i < R.ans.length && R.ans[i] === id; i++) cnt++;
+    const g = $(`.ing[data-id="${id}"]`); if (g) { g.classList.add('glow'); later(() => g.classList.remove('glow'), 3500); }
+    return n === 2 ? `Сейчас нужно положить: ${ING[id].toLowerCase()}. А сколько — посчитай сама! Я подсветил.` : `Следующим нужно положить: ${ING[id].toLowerCase()}. Я подсветил!`;
   });
-  if (n === 2 && !S.labTalk2) { S.labTalk2 = true; later(() => say('Прочитай рецепт зелья добра. Ингредиенты из путешествия уже на полке!'), 400); }
+  if (n === 2 && !S.labTalk2) { S.labTalk2 = true; later(() => say('Прочитай рецепт зелья добра и посчитай внимательно!'), 400); }
 };
 
 /* ----- Мост под дождём ----- */
@@ -865,20 +909,22 @@ const TILE_NAME = { star: 'звезда', moon: 'луна', sun: 'солнце',
 function rainSVG() { let h = '<g class="rain" aria-hidden="true">'; for (let i = 0; i < 46; i++) { const x = Math.random() * 1280, d = (Math.random() * 1.2).toFixed(2), dur = (1 + Math.random() * .6).toFixed(2), s = (.5 + Math.random() * .5).toFixed(2); h += `<g transform="translate(${x.toFixed(0)} 0) scale(${s})"><path class="rd" style="animation-delay:-${d}s;animation-duration:${dur}s" d="M0 -22 C12 -4 12 10 0 12 C-12 10 -12 -4 0 -22 Z" fill="#2F5BD3"/></g>`; } return h + '</g>'; }
 function plankSVG(i, ok) {
   const t = .05 + i * .09, p = bz(t), a = bzAng(t);
-  return ok ? `<g id="pl${i}" class="plank" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)}) rotate(${a.toFixed(1)})"><rect x="-47" y="-18" width="94" height="36" rx="6" fill="#9A5B2E" stroke="#6B3A12" stroke-width="3"/><path d="M-28 -18 V18 M28 -18 V18" stroke="#6B3A12" stroke-opacity=".45" stroke-width="2"/></g>`
-    : `<g id="pl${i}" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)}) rotate(${a.toFixed(1)})"><rect x="-47" y="-18" width="94" height="36" rx="6" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="8 7"/></g>`;
+  return ok ? `<g class="plank" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)}) rotate(${a.toFixed(1)})"><rect x="-47" y="-18" width="94" height="36" rx="6" fill="#9A5B2E" stroke="#6B3A12" stroke-width="3"/><path d="M-28 -18 V18 M28 -18 V18" stroke="#6B3A12" stroke-opacity=".45" stroke-width="2"/></g>`
+    : `<g transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)}) rotate(${a.toFixed(1)})"><rect x="-47" y="-18" width="94" height="36" rx="6" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="8 7"/></g>`;
 }
+const GOOD_DROP = `<circle r="26" fill="url(#gGlow)"/><path d="M0 -24 C13 -4 15 11 0 22 C-15 11 -13 -4 0 -24 Z" fill="#3D7BFF" stroke="#1A3590" stroke-width="2.5"/><path d="M-4 2 L-1 5 L4 -3" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"/>`;
+const BAD_DROP = `<path d="M0 -24 C13 -4 15 11 0 22 C-15 11 -13 -4 0 -24 Z" fill="#7A3FB0" stroke="#3A1550" stroke-width="2.5"/><path d="M-6 0 L-2 3 M6 0 L2 3" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M-5 11 Q0 7 5 11" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>`;
 SC.bridge = () => {
   const o = S.outfit, ready = o.hat && o.top && !o.dress;
   const planksHTML = n => { let h = ''; for (let i = 0; i < 11; i++) h += plankSVG(i, i < 4 + n || i > 6); return h; };
-  add(svg(BG.bridge() + `<g id="planks">${planksHTML(0)}</g><g id="walker">${at(220, 620 - 322 * .42, .42, ART.princess(S.outfit))}</g>` + rainSVG()));
+  add(svg(BG.bridge() + `<g id="planks">${planksHTML(0)}</g><g id="walker">${at(220, 620 - 322 * .42, .42, ART.princess(S.outfit))}</g>` + rainSVG() + `<g id="drops"></g><g id="catcher"></g>`));
   topbar({ map: true });
   if (!ready) {
     talk([{ who: 'Альбина', text: 'Бр-р-р! На мосту льёт сильный дождь. В таком наряде я промокну и замёрзну.' },
     { who: 'Альбина', text: 'Нужно надеть шапку и тёплую кофту. Схожу в гардероб!', end: 'В гардероб' }], () => go('wardrobe', 'bridge'));
     return;
   }
-  let ti = 0, filled = [];
+  let ti = 0, filled = [], phase = 'planks';
   const panel = add(`<div class="pat sheet"><div class="pat-head"><b id="patTitle"></b><span id="patN"></span></div><div class="pat-row" id="patRow"></div><div class="pat-opts" id="patOpts"></div></div>`);
   const render = () => {
     const T = BRIDGE[ti]; let f = 0;
@@ -897,23 +943,69 @@ SC.bridge = () => {
   const solved = () => {
     $$('#patOpts .opt').forEach(b => b.disabled = true);
     const i = 4 + ti; $('#planks').innerHTML = planksHTML(ti + 1); sparkle(...bz(.05 + i * .09), 10); sfx.win();
-    later(() => { ti++; filled = []; if (ti < 3) render(); else walk(); }, 1100);
+    later(() => { ti++; filled = []; if (ti < 3) { render(); newRoundClap(); } else walk(); }, 1100);
   };
   const walk = () => {
-    panel.remove(); $('#clapBtn') && $('#clapBtn').remove();
+    panel.remove(); phase = 'walk';
     const w = $('#walker'), t0 = performance.now(), dur = 2800;
-    const stepF = now => { const t = Math.min(1, (now - t0) / dur), p = bz(t); w.setAttribute('transform', `translate(${p[0] - 220} ${p[1] - 620})`); if (t < 1) RAF = requestAnimationFrame(stepF); else done(); };
+    const stepF = now => { const t = Math.min(1, (now - t0) / dur), p = bz(t); w.setAttribute('transform', `translate(${p[0] - 220} ${p[1] - 620})`); if (t < 1) RAF = requestAnimationFrame(stepF); else catchIntro(); };
     RAF = requestAnimationFrame(stepF);
   };
+  /* ловля волшебных капель */
+  const GOAL = 12; let caught = 0, shieldUntil = 0, slowUntil = 0;
+  const catchIntro = () => {
+    talk([{ who: 'Альбина', text: 'Мост починен! А дождь-то волшебный: среди капель есть светящиеся синие. Они нужны для зелий!' },
+    { who: 'Альбина', text: 'Но Рарин заколдовал часть капель, они фиолетовые и сердитые. Их ловить нельзя!', end: 'Ловить капли' }], catchGame);
+  };
+  const catchGame = () => {
+    phase = 'catch'; newRoundClap(); $('#walker').classList.add('fade', 'hidden');
+    const info = note('', 'swamp-note');
+    const showInfo = () => { info.innerHTML = `<b>Лови синие капли: ${caught} из ${GOAL}.</b> Води мышкой, Альбина бежит за ней. Фиолетовые обходи, они отнимают две капли.`; };
+    showInfo(); speak('Лови синие капли. Фиолетовые обходи.');
+    const cat = $('#catcher'), dropsG = $('#drops'); let px = 640;
+    cat.innerHTML = `<g id="catIn">${at(0, 704 - 322 * .5, .5, ART.princess(S.outfit))}<g transform="translate(0 586)"><path d="M-30 -14 L30 -14 L24 22 L-24 22 Z" fill="#CFE6FF" stroke="#2B2140" stroke-width="3" opacity=".95"/><path d="M-30 -14 C-20 -26 20 -26 30 -14" fill="none" stroke="#2B2140" stroke-width="3"/><g id="umb" style="display:none"><path d="M-70 -60 C-60 -120 60 -120 70 -60 Z" fill="#FF7EB6" stroke="#2B2140" stroke-width="3"/><path d="M0 -60 V0" stroke="#2B2140" stroke-width="4"/></g></g></g>`;
+    const catIn = $('#catIn'), umb = $('#umb');
+    const drawCat = () => { catIn.setAttribute('transform', `translate(${px.toFixed(1)} 0)`); umb.style.display = Date.now() < shieldUntil ? '' : 'none'; };
+    drawCat();
+    let drops = [], last = 0, spawnT = 0;
+    const spawn = () => {
+      const bad = Math.random() < (caught > 6 ? .42 : .32), x = 80 + Math.random() * 1120;
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'g'); el.innerHTML = bad ? BAD_DROP : GOOD_DROP; dropsG.appendChild(el);
+      drops.push({ x, y: 120, v: 2.6 + Math.random() * 1.6 + caught * .14, bad, el });
+    };
+    const loop = now => {
+      const dt = Math.min(40, now - (last || now)); last = now; const k = dt / 16.7 * (Date.now() < slowUntil ? .5 : 1);
+      px += (Math.max(70, Math.min(1210, MX)) - px) * Math.min(1, .22 * dt / 16.7);
+      spawnT -= dt; if (spawnT <= 0) { spawn(); spawnT = Math.max(360, 780 - caught * 30); }
+      drops = drops.filter(d => {
+        d.y += d.v * k; d.el.setAttribute('transform', `translate(${d.x.toFixed(1)} ${d.y.toFixed(1)})`);
+        if (d.y > 556 && d.y < 610 && Math.abs(d.x - px) < 52) {
+          d.el.remove();
+          if (d.bad) { if (Date.now() < shieldUntil) { sfx.click(); } else { caught = Math.max(0, caught - 2); sfx.err(); say('Ой! Заколдованная капля. Минус две.', 'err'); } }
+          else { caught++; sfx.ok(); sparkle(px, 580, 6); }
+          showInfo(); return false;
+        }
+        if (d.y > 740) { d.el.remove(); return false; }
+        return true;
+      });
+      drawCat();
+      if (caught >= GOAL) { drops.forEach(d => d.el.remove()); info.remove(); sfx.win(); later(done, 600); return; }
+      RAF = requestAnimationFrame(loop);
+    };
+    RAF = requestAnimationFrame(loop);
+  };
   const done = () => {
-    S.inv.drop = true; if (!S.symbols.includes('moon')) S.symbols.push('moon'); setStep(STEP.swamp);
-    talk([{ who: 'Альбина', text: 'Ура, мост починен, и я перешла на другой берег!' },
-    { who: 'Альбина', text: 'Наберу волшебных капель дождя, они могут пригодиться для зелий.' },
-    { who: 'Альбина', text: 'А на перилах моста светится знак Луна. Запишу его в книгу. Следы ведут дальше, к болоту.', end: 'На карту' }], () => go('map'));
+    S.inv.drop = true; setStep(STEP.swamp);
+    $('#clapBtn') && $('#clapBtn').remove();
+    talk([{ who: 'Альбина', text: 'Двенадцать волшебных капель! Они точно пригодятся для зелья.' },
+    { who: 'Альбина', text: 'Ой, а на перилах моста что-то светится!', end: 'Посмотреть' }], () => foundSymbol('moon', 'на мосту', () =>
+      talk([{ who: 'Альбина', text: 'Следы Рарина ведут дальше, к болоту.', end: 'На карту' }], () => go('map'))));
   };
   render();
   clapButton(() => {
-    const T = BRIDGE[ti]; if (!T || filled.length >= T.ans.length) return 'Подожди, доска уже встаёт на место!';
+    if (phase === 'walk') return { t: 'Подожди, Альбина идёт по мосту!', keep: true };
+    if (phase === 'catch') { shieldUntil = Date.now() + 7000; slowUntil = Date.now() + 7000; return 'Держи мой зонтик! Семь секунд фиолетовые капли тебе не страшны, и дождь пойдёт медленнее.'; }
+    const T = BRIDGE[ti]; if (!T || filled.length >= T.ans.length) return { t: 'Подожди, доска уже встаёт на место!', keep: true };
     const k = T.ans[filled.length]; filled.push(k); sfx.ok(); render(); if (filled.length === T.ans.length) solved();
     return `Я поставил одну плитку за тебя: ${TILE_NAME[k] || 'число ' + k}.`;
   });
@@ -933,23 +1025,23 @@ function buildSwamp(P) {
   return val;
 }
 SC.swamp = () => {
-  add(svg(BG.swamp() + `<g id="pads"></g><g id="mini" class="mini"></g><g id="beamG"></g>`));
+  add(svg(BG.swamp() + `<g id="pads"></g><g id="mini" class="mini"></g><g id="glares"></g><g id="beamG"></g>`));
   topbar({ map: true });
   const info = note('', 'swamp-note');
-  let st = 0, val, cur, used;
+  let st = 0, val, cur, used, phase = 'pads', slowUntil = 0;
   const mini = $('#mini');
   const place = (x, y) => { mini.style.transform = `translate(${x}px, ${y}px)`; };
   const setup = () => {
     const P = SWAMP[st]; val = buildSwamp(P); cur = null; used = new Set();
     info.innerHTML = `<b>${st ? 'Часть 2 из 2' : 'Часть 1 из 2'}.</b> ${P.txt}`; speak(P.txt);
-    let h = ''; Object.keys(val).forEach(k => { const [c, r] = k.split(',').map(Number), [x, y] = cellXY(c, r), rot = (c * 37 + r * 71) % 360; h += `<g class="pad" data-k="${k}" transform="translate(${x} ${y})"><g class="pad-in"><g transform="rotate(${rot})"><path d="M0 0 L40 -7 A42 23 0 1 1 40 7 Z" fill="#2E9E4F" stroke="#1F6E3A" stroke-width="3"/></g><circle r="18" fill="#FFFBF2" stroke="#1F6E3A" stroke-width="2.5"/><text class="padnum" y="8" text-anchor="middle">${val[k]}</text></g></g>`; });
+    let h = ''; Object.keys(val).forEach(k => { const [c, r] = k.split(',').map(Number), [x, y] = cellXY(c, r), rot = (c * 37 + r * 71) % 360; h += `<g class="pad" data-k="${k}" transform="translate(${x} ${y})"><g class="pad-in"><g transform="rotate(${rot})"><path d="M0 0 L40 -7 A42 23 0 1 0 40 7 Z" fill="#2E9E4F" stroke="#1F6E3A" stroke-width="3"/></g><circle r="18" fill="#FFFBF2" stroke="#1F6E3A" stroke-width="2.5"/><text class="padnum" y="8" text-anchor="middle">${val[k]}</text></g></g>`; });
     $('#pads').innerHTML = h;
     mini.innerHTML = at(0, -322 * .26, .26, ART.princess(S.outfit));
     mini.style.transition = 'none'; place(...P.from); void mini.getBoundingClientRect(); mini.style.transition = '';
     $$('.pad').forEach(g => onAct(g, () => hop(g), 'Кувшинка с числом ' + val[g.dataset.k]));
   };
   const hop = g => {
-    const P = SWAMP[st], k = g.dataset.k; if (used.has(k) || cur === 'done') return;
+    const P = SWAMP[st], k = g.dataset.k; if (phase !== 'pads' || used.has(k) || cur === 'done') return;
     const v = val[k], [c, r] = k.split(',').map(Number), exp = cur === null ? P.start : val[cur] + P.stepv;
     const bad = msg => { sfx.err(); const i = $('.pad-in', g); i.classList.remove('shake'); void i.getBoundingClientRect(); i.classList.add('shake'); say(msg, 'err'); };
     if (v !== exp) return bad('Эта кувшинка не подходит. Какое число должно быть следующим?');
@@ -959,21 +1051,55 @@ SC.swamp = () => {
     if (v === P.last) { cur = 'done'; used.add(k); later(() => { place(x, 396); sfx.win(); }, 500); later(stageDone, 1500); }
   };
   const stageDone = () => {
-    if (st === 0) { say('Первая часть болота пройдена! Впереди вторая.', 'ok'); st = 1; later(setup, 1600); return; }
-    info.innerHTML = '<b>Тучка уплывает!</b> Нажми на солнечный лучик, чтобы его поймать.';
-    $('#cloud').classList.add('away');
-    $('#beamG').innerHTML = `<g id="beam" class="beam" transform="translate(240 250) scale(1.6)"><circle r="40" fill="url(#gGlow)"/>${ING_ICON.sun}</g>`;
-    onAct($('#beam'), () => {
-      sfx.magic(); sparkle(240, 250, 14); $('#beamG').innerHTML = '';
-      S.inv.sun = true; S.inv.lily = true; if (!S.symbols.includes('lily')) S.symbols.push('lily'); setStep(STEP.door);
-      talk([{ who: 'Альбина', text: 'Поймала тёплый солнечный лучик! И сорву одну кувшинку на память.' },
-      { who: 'Альбина', text: 'Смотри, на самой большой кувшинке нарисован знак Цветок. Запишу его в книгу.' },
-      { who: 'Альбина', text: 'Следы волшебника ведут к тёмной горе. Там его пещера!', end: 'На карту' }], () => go('map'));
+    if (st === 0) { say('Первая часть болота пройдена! Впереди вторая.', 'ok'); st = 1; later(() => { setup(); newRoundClap(); }, 1600); return; }
+    catchBeam();
+  };
+  /* ловля солнечного лучика */
+  const catchBeam = () => {
+    phase = 'beam'; newRoundClap();
+    $('#cloud').classList.add('away'); $('#pads').classList.add('fade', 'hidden');
+    const NEED = 3; let hits = 0;
+    const showInfo = () => { info.innerHTML = `<b>Солнышко выглянуло! Поймай солнечный лучик: ${hits} из ${NEED}.</b> Он прыгает по болоту. Бледные блики на воде — это не лучик!`; };
+    showInfo(); speak('Поймай солнечный лучик. Бледные блики — это не лучик!');
+    const mk = (cls, inner) => { const el = document.createElementNS('http://www.w3.org/2000/svg', 'g'); el.setAttribute('class', cls); el.innerHTML = inner; return el; };
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const body = (x, y, sp) => { const a = Math.random() * Math.PI * 2; return { x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, sp, t: 0 }; };
+    const beam = body(640, 520, 5), beamEl = mk('beam', `<g class="beam-in"><circle r="46" fill="url(#gGlow)"/>${ING_ICON.sun}</g>`);
+    $('#beamG').appendChild(beamEl);
+    const glares = [0, 1, 2, 3].map(() => { const g = body(rnd(200, 1080), rnd(460, 660), 3), el = mk('glare', `<circle r="40" fill="url(#gGlow)" opacity=".55"/><circle r="15" fill="#FFF6C8" opacity=".7"/>`); $('#glares').appendChild(el); g.el = el; onAct(el, () => { sfx.click(); say('Это просто блик на воде! Ищи настоящий лучик.'); }, 'Блик'); return g; });
+    let scale = 1.5, last = 0;
+    const move = (b, dt, minY = 270) => {
+      b.t -= dt; if (b.t <= 0) { const a = Math.random() * Math.PI * 2; b.vx = Math.cos(a) * b.sp; b.vy = Math.sin(a) * b.sp; b.t = rnd(500, 1300); }
+      const k = dt / 16.7 * (Date.now() < slowUntil ? .35 : 1);
+      b.x += b.vx * k; b.y += b.vy * k;
+      if (b.x < 90 || b.x > 1190) { b.vx *= -1; b.x = Math.max(90, Math.min(1190, b.x)); }
+      if (b.y < minY || b.y > 670) { b.vy *= -1; b.y = Math.max(minY, Math.min(670, b.y)); }
+    };
+    onAct(beamEl, () => {
+      hits++; sfx.magic(); sparkle(beam.x, beam.y, 10); showInfo();
+      if (hits >= NEED) { cancelAnimationFrame(RAF); beamEl.remove(); $('#glares').innerHTML = ''; info.remove(); collect(); return; }
+      beam.sp += 2.2; scale -= .25; beam.t = 0; beam.x = rnd(200, 1080); beam.y = rnd(300, 640);
+      say(hits === 1 ? 'Поймала! Но лучик вырвался и стал быстрее!' : 'Ещё разок! Лучик совсем шустрый!', 'ok');
     }, 'Солнечный лучик');
+    const loop = now => {
+      const dt = Math.min(40, now - (last || now)); last = now;
+      move(beam, dt); beamEl.setAttribute('transform', `translate(${beam.x.toFixed(1)} ${beam.y.toFixed(1)}) scale(${scale})`);
+      glares.forEach(g => { move(g, dt, 440); g.el.setAttribute('transform', `translate(${g.x.toFixed(1)} ${g.y.toFixed(1)})`); });
+      RAF = requestAnimationFrame(loop);
+    };
+    RAF = requestAnimationFrame(loop);
+  };
+  const collect = () => {
+    S.inv.sun = true; S.inv.lily = true; setStep(STEP.door);
+    $('#clapBtn') && $('#clapBtn').remove();
+    talk([{ who: 'Альбина', text: 'Поймала тёплый солнечный лучик! И сорву кувшинки, они тоже волшебные.' },
+    { who: 'Альбина', text: 'Смотри, на самой большой кувшинке что-то нарисовано!', end: 'Посмотреть' }], () => foundSymbol('lily', 'на болоте', () =>
+      talk([{ who: 'Альбина', text: 'Это третий знак! Следы Рарина ведут к тёмной горе. Там его пещера!', end: 'На карту' }], () => go('map'))));
   };
   setup();
   clapButton(() => {
-    if (cur === 'done') return 'Ты уже на берегу!';
+    if (phase === 'beam') { slowUntil = Date.now() + 5000; return 'Я заколдую лучик, чтобы он пять секунд летал медленно. Лови!'; }
+    if (cur === 'done') return { t: 'Ты уже на берегу!', keep: true };
     const P = SWAMP[st], exp = cur === null ? P.start : val[cur] + P.stepv;
     const k = P.path[(exp - P.start) / P.stepv].join(','), g = $(`.pad[data-k="${k}"] .pad-in`);
     g.classList.add('glow'); later(() => g.classList.remove('glow'), 3500);
@@ -1004,7 +1130,7 @@ SC.door = () => {
   clapButton(() => {
     let k = 0; while (k < put.length && put[k] === DOOR_ANS[k]) k++;
     if (k < put.length) { put = put.slice(0, k); }
-    if (k >= 3) return 'Всё уже на месте!';
+    if (k >= 3) return { t: 'Всё уже на месте!', keep: true };
     put.push(DOOR_ANS[k]); draw(); sfx.ok(); if (put.length === 3) later(check, 500);
     return `Я положил знак ${SYM_NAME[DOOR_ANS[k]]}. Он ${SYM_WHERE[DOOR_ANS[k]]}.`;
   });
@@ -1034,11 +1160,73 @@ SC.wolf = () => {
     if (SEL !== 'kind') { sfx.err(); say('Р-р-р! Сначала возьми зелье добра из сумки.', 'err'); return; }
     sfx.magic(); sparkle(820, 540, 20); S.inv.wolfOK = true; delete S.inv.kind; SEL = null;
     const w = $('#wolf'); w.classList.remove('growl'); w.innerHTML = at(820, 640, 1.35, ART.wolf(false)); $$('.bag-item[data-k="kind"]').forEach(e => e.remove()); $$('.wolf-note').forEach(e => e.remove());
-    setStep(STEP.mirrors);
+    setStep(STEP.portrait);
     later(() => talk([{ who: 'Волк', text: 'Ой... Что со мной было? Спасибо тебе, принцесса! Злые чары рассеялись.' },
-    { who: 'Волк', text: 'Рарин спрятал твоего брата Мирина в глубине пещеры. Там очень темно, и без света дорогу не найти.' },
-    { who: 'Альбина', text: 'Тогда я направлю туда солнечный свет зеркалами!', end: 'Вглубь пещеры' }], () => go('mirrors')), 900);
+    { who: 'Волк', text: 'Рарин спрятал Мирина в глубине пещеры. Но сначала загляни в его тайную комнату. Там висит разорванная волшебная картина.' },
+    { who: 'Волк', text: 'Рарин никому не разрешает на неё смотреть. Наверное, она хранит его тайну!', end: 'В тайную комнату' }], () => go('portrait')), 900);
   }, 'Волк');
+};
+
+/* ----- Тайная комната: волшебная картина (пятнашки 3×3) ----- */
+const PT = 130, PX = 445, PY = 202;
+const PIC = () => `<rect width="390" height="390" fill="#BFE6FF"/><circle cx="335" cy="60" r="34" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="6" stroke-linecap="round"><path d="M335 8 V0 M335 112 V120 M283 60 H275 M387 60 H395"/></g>
+<g transform="translate(-60 110) scale(.6)">${ART.castle()}</g><path d="M0 330 C120 300 270 300 390 320 L390 390 L0 390 Z" fill="#2E9E4F"/><path d="M0 360 C140 344 260 350 390 340 L390 390 L0 390 Z" fill="#7CC36E"/>
+${at(235, 384 - 326 * .9, .9, ART.knight())}<rect x="4" y="4" width="382" height="382" fill="none" stroke="#C9922B" stroke-width="8"/>`;
+function bfs8() {
+  const goal = '012345678', dist = new Map([[goal, 0]]), q = [goal];
+  for (let h = 0; h < q.length; h++) { const s = q[h], e = s.indexOf('8'), d = dist.get(s); for (const n of nb8(e)) { const a = s.split(''); [a[e], a[n]] = [a[n], a[e]]; const t = a.join(''); if (!dist.has(t)) { dist.set(t, d + 1); q.push(t); } } }
+  return dist;
+}
+function nb8(e) { const r = Math.floor(e / 3), c = e % 3, o = []; if (r > 0) o.push(e - 3); if (r < 2) o.push(e + 3); if (c > 0) o.push(e - 1); if (c < 2) o.push(e + 1); return o; }
+let DIST8 = null;
+SC.portrait = () => {
+  add(svg(`<rect width="1280" height="720" fill="#3B2A5C"/><g fill="#463470">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => `<rect x="${i * 140}" y="0" width="70" height="600"/>`).join('')}</g>
+<path d="M0 600 H1280 V720 H0 Z" fill="#5A3E2B"/><path d="M0 640 H1280 M0 680 H1280" stroke="#4A3222" stroke-width="3"/>
+<g><rect x="200" y="420" width="26" height="80" fill="#F4F1E8"/><path class="flame" d="M213 420 C200 400 213 384 213 376 C220 390 226 404 213 420 Z" fill="#FFB627"/><rect x="1054" y="420" width="26" height="80" fill="#F4F1E8"/><path class="flame" d="M1067 420 C1054 400 1067 384 1067 376 C1074 390 1080 404 1067 420 Z" fill="#FFB627"/><rect x="180" y="500" width="66" height="12" rx="4" fill="#8B5A2B"/><rect x="1034" y="500" width="66" height="12" rx="4" fill="#8B5A2B"/></g>
+<rect x="${PX - 26}" y="${PY - 26}" width="${3 * PT + 52}" height="${3 * PT + 52}" rx="10" fill="#C9922B" stroke="#8A5E14" stroke-width="5"/><rect x="${PX - 6}" y="${PY - 6}" width="${3 * PT + 12}" height="${3 * PT + 12}" fill="#2A2340"/>
+<g id="tiles8"></g>` + hero(150, 704, .62)));
+  topbar({ map: true });
+  const info = note('<b>Тайная комната Рарина.</b> Собери рассыпанную волшебную картину: нажимай на кусочек рядом с пустым местом, чтобы подвинуть его.', 'mir-note');
+  const tools = add(`<div class="p-tools"><button class="btn alt" id="pNums" aria-pressed="false">Показать цифры</button><span class="p-moves">Ходов: <b id="pMoves">0</b></span></div>`);
+  if (!DIST8) DIST8 = bfs8();
+  let st, moves = 0, won = false, nums = false;
+  for (let tries = 0; tries < 100; tries++) {
+    const a = '012345678'.split(''); let e = 8, prev = -1;
+    for (let i = 0; i < 160; i++) { const ns = nb8(e).filter(n => n !== prev); const n = ns[Math.floor(Math.random() * ns.length)]; [a[e], a[n]] = [a[n], a[e]]; prev = e; e = n; }
+    st = a.join(''); const d = DIST8.get(st); if (d >= 16 && d <= 20) break;
+  }
+  const pic = PIC();
+  const tileXY = p => [PX + (p % 3) * PT, PY + Math.floor(p / 3) * PT];
+  $('#tiles8').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(id => `<g class="t8 ${id === 8 ? 'hidden fade' : ''}" data-id="${id}"><svg width="${PT}" height="${PT}" viewBox="${(id % 3) * PT} ${Math.floor(id / 3) * PT} ${PT} ${PT}">${pic}</svg><rect width="${PT}" height="${PT}" fill="none" stroke="#2A2340" stroke-width="3"/><g class="t8n"><circle cx="20" cy="20" r="15" fill="#FFFBF2" stroke="#2B2140" stroke-width="2"/><text x="20" y="27" text-anchor="middle" class="padnum">${id + 1}</text></g></g>`).join('');
+  const posOf = id => st.indexOf(String(id));
+  const layout = () => $$('.t8').forEach(g => { const [x, y] = tileXY(posOf(+g.dataset.id)); g.style.transform = `translate(${x}px, ${y}px)`; });
+  layout();
+  const slide = id => {
+    const p = posOf(id), e = st.indexOf('8');
+    if (!nb8(e).includes(p)) return false;
+    const a = st.split(''); [a[e], a[p]] = [a[p], a[e]]; st = a.join(''); moves++; $('#pMoves').textContent = moves; layout(); sfx.click();
+    if (st === '012345678') solvedP(); return true;
+  };
+  $$('.t8').forEach(g => { if (g.dataset.id !== '8') onAct(g, () => { if (won) return; if (!slide(+g.dataset.id)) { sfx.err(); const r = g.querySelector('rect'); r.setAttribute('stroke', '#E0402F'); later(() => r.setAttribute('stroke', '#2A2340'), 350); } }, 'Кусочек картины ' + (+g.dataset.id + 1)); });
+  $('#pNums', tools).onclick = e => { nums = !nums; e.currentTarget.setAttribute('aria-pressed', nums); e.currentTarget.textContent = nums ? 'Спрятать цифры' : 'Показать цифры'; $('#tiles8').classList.toggle('shownums', nums); sfx.click(); };
+  const solvedP = () => {
+    won = true; tools.remove(); info.remove(); $('#clapBtn') && $('#clapBtn').remove();
+    $('#tiles8').classList.remove('shownums'); $$('.t8 rect').forEach(r => r.setAttribute('stroke', 'none')); $('.t8[data-id="8"]').classList.remove('hidden');
+    sfx.win(); sparkle(PX + 195, PY + 195, 24); setStep(STEP.mirrors);
+    later(() => talk([{ who: 'Альбина', text: 'Картина собралась! На ней добрый рыцарь в фиолетовом плаще, рядом с нашим замком.' },
+    { who: 'Альбина', text: 'Постой... У рыцаря такие же торчащие волосы, как у Рарина! И плащ такой же. Что же это значит?' },
+    { who: 'Альбина', text: 'Подумаю об этом потом. Сначала спасу Мирина!', end: 'Вглубь пещеры' }], () => go('mirrors')), 1200);
+  };
+  clapButton(() => {
+    if (won) return { t: 'Картина уже собрана!', keep: true };
+    let n = 0; const stepOne = () => {
+      if (won) return; const e = st.indexOf('8'), d = DIST8.get(st);
+      const best = nb8(e).find(p => { const a = st.split(''); [a[e], a[p]] = [a[p], a[e]]; return DIST8.get(a.join('')) < d; });
+      if (best === undefined) return; slide(+st[best]); n++; if (n < 4) later(stepOne, 450);
+    };
+    later(stepOne, 300);
+    return 'Я сделаю за тебя четыре правильных хода. Смотри, как я двигаю!';
+  });
 };
 
 /* ----- Зеркала в тёмной пещере ----- */
@@ -1060,7 +1248,7 @@ const cageSVG = open => `<g id="cage"><rect x="1050" y="470" width="170" height=
 SC.mirrors = () => {
   let tiles = ''; for (let c = 0; c < 6; c++) for (let r = 0; r < 4; r++) tiles += `<rect x="${MG.x + c * MG.c + 4}" y="${MG.y + r * MG.c + 4}" width="102" height="102" rx="12" fill="#332A4D" stroke="#40365F" stroke-width="2"/>`;
   const rocks = [...ROCKS].map(k => { const [c, r] = k.split(',').map(Number); return `<path transform="translate(${cx(c)} ${cy(r)})" d="M-40 26 C-46 -6 -24 -34 4 -34 C30 -34 46 -10 42 26 Z" fill="#5A4E7A" stroke="#2A2340" stroke-width="3"/>`; }).join('');
-  add(svg(BG.caveIn(true) + tiles + rocks + `<g id="beam" class="beamline"></g><g id="mirs"></g>` + cageSVG(false) + hero(150, 704, .55)));
+  add(svg(BG.caveIn(true) + `<g id="board" class="fade">${tiles}${rocks}<g id="beam" class="beamline"></g><g id="mirs"></g></g>` + cageSVG(false) + hero(150, 704, .55) + `<g id="wizIn" class="fade hidden">${at(720, 700 - 390 * .78, .78, ART.wizard())}</g>`));
   topbar({ map: true });
   note('<b>Тёмная пещера.</b> Нажимай на зеркала, чтобы поворачивать их. Направь солнечный луч к клетке с Мирином. Камни свет не пропускают.', 'mir-note');
   const M = {}; Object.keys(MSOL).concat(MEXTRA).forEach(k => M[k] = Math.random() < .5 ? '/' : '\\');
@@ -1077,14 +1265,17 @@ SC.mirrors = () => {
     if (drawBeam() && !won) {
       won = true; sfx.win(); $('#bars').classList.add('hidden'); sparkle(1135, 560, 18); $$('.mir-note').forEach(e => e.remove()); $('#clapBtn') && $('#clapBtn').remove();
       setStep(STEP.duel);
-      later(() => talk([{ who: 'Мирин', text: 'Альбина! Я здесь! Свет сломал волшебную клетку!' },
-      { who: 'Рарин', text: 'Что?! Ты прошла мост, болото и мою дверь? Ну нет! Посмотрим, повторишь ли ты мои заклинания!', end: 'Сразиться' }], () => go('duel')), 1100);
+      later(() => talk([{ who: 'Мирин', text: 'Альбина! Я здесь! Свет сломал волшебную клетку!' }], () => {
+        $('#board').classList.add('hidden'); sfx.err();
+        later(() => { $('#wizIn').classList.remove('hidden'); }, 300);
+        later(() => talk([{ who: 'Рарин', text: 'Что?! Ты прошла мост, болото и мою дверь, да ещё и волка расколдовала? Ну нет! Посмотрим, повторишь ли ты мои заклинания!', end: 'Сразиться' }], () => go('duel')), 1200);
+      }), 1100);
     }
   };
   $$('.mir').forEach(g => onAct(g, () => { if (won) return; sfx.click(); turn(g.dataset.k); after(); }, 'Зеркало'));
   drawBeam();
   clapButton(() => {
-    if (won) return 'Мирин уже свободен!';
+    if (won) return { t: 'Мирин уже свободен!', keep: true };
     const k = Object.keys(MSOL).find(k => M[k] !== MSOL[k]);
     if (!k) return 'Почти! Проверь, нет ли лишнего поворота.';
     turn(k); sfx.ok(); const g = $(`.mir[data-k="${k}"]`); g.classList.add('glow'); later(() => g.classList.remove('glow'), 2500); after();
@@ -1111,7 +1302,7 @@ SC.duel = () => {
     seq.forEach((v, i) => later(() => flash(v), 700 + i * gap));
     later(() => { busy = false; $('#wiz').classList.remove('casting'); setStatus(`<b>Раунд ${round + 1} из 3.</b> Теперь повтори заклинания в том же порядке!`); }, 700 + seq.length * gap);
   };
-  const newRound = () => { const len = [4, 5, 6][round]; seq = []; for (let i = 0; i < len; i++) seq.push(Math.floor(Math.random() * 4)); showSeq(); };
+  const newRound = () => { newRoundClap(); const len = [4, 5, 6][round]; seq = []; for (let i = 0; i < len; i++) seq.push(Math.floor(Math.random() * 4)); showSeq(); };
   btns.forEach(b => b.onclick = () => {
     if (busy) return; const i = +b.dataset.i; flash(i);
     if (i !== seq[pos]) { sfx.err(); busy = true; setStatus('Ха-ха! Не то заклинание! Смотри ещё раз.'); later(() => showSeq(), 1500); return; }
@@ -1140,7 +1331,7 @@ SC.duel = () => {
   drawHP();
   talk([{ who: 'Рарин', text: 'Я буду колдовать, а ты повторяй. Ошибёшься — начнём заново! Ха-ха!', end: 'Начать' }], () => newRound());
   clapButton(() => {
-    if (busy) return 'Подожди, волшебник ещё колдует. Потом позови меня снова!';
+    if (busy) return { t: 'Подожди, Рарин ещё колдует. Потом позови меня снова!', keep: true };
     showSeq(true); return 'Я попрошу его колдовать помедленнее. Смотри!';
   });
 };
