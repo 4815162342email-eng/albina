@@ -247,6 +247,11 @@ button:focus-visible, [role=button]:focus-visible { outline: 4px solid var(--mag
 .flame { animation: flick .4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center bottom; }
 @keyframes pop2 { from { transform: scale(.7); opacity: 0; } }
 
+.pz { cursor: grab; touch-action: none; }
+.pz.drag { cursor: grabbing; filter: drop-shadow(0 10px 12px rgba(0,0,0,.45)); }
+.pz.locked { cursor: default; }
+.mir-note { padding: 10px 18px; }
+
 </style>
 <div id="viewport"><div id="stage" aria-live="polite"></div></div>
 <div id="defs"></div>
@@ -1167,51 +1172,48 @@ SC.wolf = () => {
   }, 'Волк');
 };
 
-/* ----- Тайная комната: волшебная картина (пятнашки 3×3) ----- */
+/* ----- Тайная комната: волшебная картина (пазл) ----- */
 const PT = 130, PX = 445, PY = 202;
 const PIC = () => `<rect width="390" height="390" fill="#BFE6FF"/><circle cx="335" cy="60" r="34" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="6" stroke-linecap="round"><path d="M335 8 V0 M335 112 V120 M283 60 H275 M387 60 H395"/></g>
 <g transform="translate(-60 110) scale(.6)">${ART.castle()}</g><path d="M0 330 C120 300 270 300 390 320 L390 390 L0 390 Z" fill="#2E9E4F"/><path d="M0 360 C140 344 260 350 390 340 L390 390 L0 390 Z" fill="#7CC36E"/>
 ${at(235, 384 - 326 * .9, .9, ART.knight())}<rect x="4" y="4" width="382" height="382" fill="none" stroke="#C9922B" stroke-width="8"/>`;
-function bfs8() {
-  const goal = '012345678', dist = new Map([[goal, 0]]), q = [goal];
-  for (let h = 0; h < q.length; h++) { const s = q[h], e = s.indexOf('8'), d = dist.get(s); for (const n of nb8(e)) { const a = s.split(''); [a[e], a[n]] = [a[n], a[e]]; const t = a.join(''); if (!dist.has(t)) { dist.set(t, d + 1); q.push(t); } } }
-  return dist;
-}
-function nb8(e) { const r = Math.floor(e / 3), c = e % 3, o = []; if (r > 0) o.push(e - 3); if (r < 2) o.push(e + 3); if (c > 0) o.push(e - 1); if (c < 2) o.push(e + 1); return o; }
-let DIST8 = null;
+const TRAY = [[60, 214], [210, 214], [60, 364], [210, 364], [60, 514], [210, 514], [920, 214], [1070, 214], [920, 364], [1070, 364], [920, 514], [1070, 514]];
 SC.portrait = () => {
   add(svg(`<rect width="1280" height="720" fill="#3B2A5C"/><g fill="#463470">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => `<rect x="${i * 140}" y="0" width="70" height="600"/>`).join('')}</g>
 <path d="M0 600 H1280 V720 H0 Z" fill="#5A3E2B"/><path d="M0 640 H1280 M0 680 H1280" stroke="#4A3222" stroke-width="3"/>
-<g><rect x="200" y="420" width="26" height="80" fill="#F4F1E8"/><path class="flame" d="M213 420 C200 400 213 384 213 376 C220 390 226 404 213 420 Z" fill="#FFB627"/><rect x="1054" y="420" width="26" height="80" fill="#F4F1E8"/><path class="flame" d="M1067 420 C1054 400 1067 384 1067 376 C1074 390 1080 404 1067 420 Z" fill="#FFB627"/><rect x="180" y="500" width="66" height="12" rx="4" fill="#8B5A2B"/><rect x="1034" y="500" width="66" height="12" rx="4" fill="#8B5A2B"/></g>
 <rect x="${PX - 26}" y="${PY - 26}" width="${3 * PT + 52}" height="${3 * PT + 52}" rx="10" fill="#C9922B" stroke="#8A5E14" stroke-width="5"/><rect x="${PX - 6}" y="${PY - 6}" width="${3 * PT + 12}" height="${3 * PT + 12}" fill="#2A2340"/>
-<g id="tiles8"></g>` + hero(150, 704, .62)));
+<g opacity=".18">${[0, 1, 2].map(i => `<path d="M${PX + i * PT} ${PY} V${PY + 3 * PT} M${PX} ${PY + i * PT} H${PX + 3 * PT}" stroke="#FFFBF2" stroke-width="2" stroke-dasharray="6 6"/>`).join('')}</g>
+<g id="pieces"></g>`));
   topbar({ map: true });
-  const info = note('<b>Тайная комната Рарина.</b> Собери рассыпанную волшебную картину: нажимай на кусочек рядом с пустым местом, чтобы подвинуть его.', 'mir-note');
-  const tools = add(`<div class="p-tools"><button class="btn alt" id="pNums" aria-pressed="false">Показать цифры</button><span class="p-moves">Ходов: <b id="pMoves">0</b></span></div>`);
-  if (!DIST8) DIST8 = bfs8();
-  let st, moves = 0, won = false, nums = false;
-  for (let tries = 0; tries < 100; tries++) {
-    const a = '012345678'.split(''); let e = 8, prev = -1;
-    for (let i = 0; i < 160; i++) { const ns = nb8(e).filter(n => n !== prev); const n = ns[Math.floor(Math.random() * ns.length)]; [a[e], a[n]] = [a[n], a[e]]; prev = e; e = n; }
-    st = a.join(''); const d = DIST8.get(st); if (d >= 16 && d <= 20) break;
-  }
-  const pic = PIC();
-  const tileXY = p => [PX + (p % 3) * PT, PY + Math.floor(p / 3) * PT];
-  $('#tiles8').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(id => `<g class="t8 ${id === 8 ? 'hidden fade' : ''}" data-id="${id}"><svg width="${PT}" height="${PT}" viewBox="${(id % 3) * PT} ${Math.floor(id / 3) * PT} ${PT} ${PT}">${pic}</svg><rect width="${PT}" height="${PT}" fill="none" stroke="#2A2340" stroke-width="3"/><g class="t8n"><circle cx="20" cy="20" r="15" fill="#FFFBF2" stroke="#2B2140" stroke-width="2"/><text x="20" y="27" text-anchor="middle" class="padnum">${id + 1}</text></g></g>`).join('');
-  const posOf = id => st.indexOf(String(id));
-  const layout = () => $$('.t8').forEach(g => { const [x, y] = tileXY(posOf(+g.dataset.id)); g.style.transform = `translate(${x}px, ${y}px)`; });
-  layout();
-  const slide = id => {
-    const p = posOf(id), e = st.indexOf('8');
-    if (!nb8(e).includes(p)) return false;
-    const a = st.split(''); [a[e], a[p]] = [a[p], a[e]]; st = a.join(''); moves++; $('#pMoves').textContent = moves; layout(); sfx.click();
-    if (st === '012345678') solvedP(); return true;
+  const info = note('<b>Тайная комната Рарина.</b> Перетащи кусочки картины мышкой в рамку.', 'mir-note');
+  let placed = 0, won = false; const pic = PIC();
+  const spots = shuffle(TRAY).slice(0, 9), pos = {};
+  $('#pieces').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(id => `<g class="pz" data-id="${id}"><svg width="${PT}" height="${PT}" viewBox="${(id % 3) * PT} ${Math.floor(id / 3) * PT} ${PT} ${PT}">${pic}</svg><rect width="${PT}" height="${PT}" fill="none" stroke="#FFFBF2" stroke-width="3"/></g>`).join('');
+  const target = id => [PX + (id % 3) * PT, PY + Math.floor(id / 3) * PT];
+  const setPos = (g, x, y) => { pos[g.dataset.id] = [x, y]; g.style.transform = `translate(${x}px, ${y}px)`; };
+  $$('.pz').forEach((g, i) => setPos(g, ...spots[i]));
+  const lock = g => {
+    const id = +g.dataset.id; g.classList.add('locked'); g.style.transition = 'transform .2s'; setPos(g, ...target(id));
+    g.querySelector('rect').setAttribute('stroke', 'none'); placed++; sfx.ok();
+    if (placed === 9) solvedP();
   };
-  $$('.t8').forEach(g => { if (g.dataset.id !== '8') onAct(g, () => { if (won) return; if (!slide(+g.dataset.id)) { sfx.err(); const r = g.querySelector('rect'); r.setAttribute('stroke', '#E0402F'); later(() => r.setAttribute('stroke', '#2A2340'), 350); } }, 'Кусочек картины ' + (+g.dataset.id + 1)); });
-  $('#pNums', tools).onclick = e => { nums = !nums; e.currentTarget.setAttribute('aria-pressed', nums); e.currentTarget.textContent = nums ? 'Спрятать цифры' : 'Показать цифры'; $('#tiles8').classList.toggle('shownums', nums); sfx.click(); };
+  const toStage = e => { const r = stage.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+  $$('.pz').forEach(g => {
+    let drag = null;
+    g.addEventListener('pointerdown', e => {
+      if (won || g.classList.contains('locked')) return; e.preventDefault(); g.setPointerCapture(e.pointerId);
+      const [mx, my] = toStage(e), [x, y] = pos[g.dataset.id]; drag = [mx - x, my - y]; g.style.transition = 'none'; $('#pieces').appendChild(g); g.classList.add('drag'); sfx.click();
+    });
+    g.addEventListener('pointermove', e => { if (!drag) return; const [mx, my] = toStage(e); setPos(g, mx - drag[0], my - drag[1]); });
+    g.addEventListener('pointerup', () => {
+      if (!drag) return; drag = null; g.classList.remove('drag');
+      const id = +g.dataset.id, [tx, ty] = target(id), [x, y] = pos[id];
+      if (Math.hypot(x - tx, y - ty) < 48) lock(g);
+      else if (x > PX - 60 && x < PX + 3 * PT - 70 && y > PY - 60 && y < PY + 3 * PT - 70) { sfx.err(); say('Этот кусочек не отсюда. Посмотри на картинку внимательнее!', 'err'); }
+    });
+  });
   const solvedP = () => {
-    won = true; tools.remove(); info.remove(); $('#clapBtn') && $('#clapBtn').remove();
-    $('#tiles8').classList.remove('shownums'); $$('.t8 rect').forEach(r => r.setAttribute('stroke', 'none')); $('.t8[data-id="8"]').classList.remove('hidden');
+    won = true; info.remove(); $('#clapBtn') && $('#clapBtn').remove();
     sfx.win(); sparkle(PX + 195, PY + 195, 24); setStep(STEP.mirrors);
     later(() => talk([{ who: 'Альбина', text: 'Картина собралась! На ней добрый рыцарь в фиолетовом плаще, рядом с нашим замком.' },
     { who: 'Альбина', text: 'Постой... У рыцаря такие же торчащие волосы, как у Рарина! И плащ такой же. Что же это значит?' },
@@ -1219,18 +1221,14 @@ SC.portrait = () => {
   };
   clapButton(() => {
     if (won) return { t: 'Картина уже собрана!', keep: true };
-    let n = 0; const stepOne = () => {
-      if (won) return; const e = st.indexOf('8'), d = DIST8.get(st);
-      const best = nb8(e).find(p => { const a = st.split(''); [a[e], a[p]] = [a[p], a[e]]; return DIST8.get(a.join('')) < d; });
-      if (best === undefined) return; slide(+st[best]); n++; if (n < 4) later(stepOne, 450);
-    };
-    later(stepOne, 300);
-    return 'Я сделаю за тебя четыре правильных хода. Смотри, как я двигаю!';
+    const free = $$('.pz:not(.locked)').slice(0, 2);
+    free.forEach((g, i) => later(() => lock(g), 300 + i * 500));
+    return free.length > 1 ? 'Я вставлю за тебя два кусочка. Остальные — сама!' : 'Я вставлю последний кусочек!';
   });
 };
 
 /* ----- Зеркала в тёмной пещере ----- */
-const MG = { x: 330, y: 170, c: 110 };
+const MG = { x: 330, y: 186, c: 110 };
 const cx = c => MG.x + c * MG.c + 55, cy = r => MG.y + r * MG.c + 55;
 const MSOL = { '1,1': '/', '1,0': '/', '4,0': '\\', '4,2': '/', '2,2': '/', '2,3': '\\' };
 const MEXTRA = ['0,3', '5,1', '5,2', '0,0'], ROCKS = new Set(['3,1', '5,0', '0,2']);
@@ -1250,7 +1248,7 @@ SC.mirrors = () => {
   const rocks = [...ROCKS].map(k => { const [c, r] = k.split(',').map(Number); return `<path transform="translate(${cx(c)} ${cy(r)})" d="M-40 26 C-46 -6 -24 -34 4 -34 C30 -34 46 -10 42 26 Z" fill="#5A4E7A" stroke="#2A2340" stroke-width="3"/>`; }).join('');
   add(svg(BG.caveIn(true) + `<g id="board" class="fade">${tiles}${rocks}<g id="beam" class="beamline"></g><g id="mirs"></g></g>` + cageSVG(false) + hero(150, 704, .55) + `<g id="wizIn" class="fade hidden">${at(720, 700 - 390 * .78, .78, ART.wizard())}</g>`));
   topbar({ map: true });
-  note('<b>Тёмная пещера.</b> Нажимай на зеркала, чтобы поворачивать их. Направь солнечный луч к клетке с Мирином. Камни свет не пропускают.', 'mir-note');
+  note('<b>Тёмная пещера.</b> Поворачивай зеркала, чтобы луч дошёл до клетки с Мирином.', 'mir-note');
   const M = {}; Object.keys(MSOL).concat(MEXTRA).forEach(k => M[k] = Math.random() < .5 ? '/' : '\\');
   if (traceBeam(M).win) M['4,2'] = '\\';
   let won = false;
